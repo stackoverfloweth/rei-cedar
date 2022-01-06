@@ -14,17 +14,15 @@
     <slot />
   </div>
 </template>
-<script>
-import { defineComponent, useCssModule, computed, ref, inject, onBeforeMount } from 'vue';
+<script setup>
+import { useCssModule, computed, ref, inject, onBeforeMount } from 'vue';
 
 // TODO: PUT MODIFIER HERE!
 import { buildClass } from '../../utils/buildClass';
 import propValidator from '../../utils/propValidator';
 import mapClasses from '../../utils/mapClasses';
 
-export default defineComponent({
-  name: 'CdrTabPanel',
-  props: {
+const props = defineProps({
     /**
      * Required string value that shows up on tab header
      */
@@ -49,69 +47,54 @@ export default defineComponent({
       default: '',
       validator: (value) => propValidator(value, ['centered', 'compact', 'full-width', 'no-border', '']),
     },
-  },
+  })
 
-  setup(props, ctx) {
-    const baseClass = 'cdr-tab-panel';
-    const active = ref(false);
-    const hidden = ref(true);
-    const animationDirection = ref(null);
+  const baseClass = 'cdr-tab-panel';
+  const style = useCssModule();
 
-    const modifierClass = computed(() => buildClass(baseClass, props.modifier));
+  const active = ref(false);
+  const hidden = ref(true);
+  const animationDirection = ref(null);
 
-    const setActive = (state) => {
-      // TODO: provide/inject current active tab index or something?
-      if (state) hidden.value = false;
-      active.value = state;
-      ctx.emit('tab-change', state, props.id);
-    };
-    const setAnimationDirection = (direction) => {
-      // TODO Use provide/inject here?
-      // console.log(direction, 'YOOOOOO')
-      animationDirection.value = direction;
-    };
-    const handleUpArrowNav = () => {
-      // YOU WAHT NOW?!?!?!
-      // TODO: emit event for tabPanel to deal with????
-      ctx.emit('tab-arrow-up')
-      // $parent.setFocusToActiveTabHeader();
-    };
-    const animationEnd = (event) => {
-      if (event.animationName.split('-')[0] === 'exit') {
-        hidden.value = true;
-        animationDirection.value = null;
-      }
-    };
+  const modifierClass = computed(() => buildClass(baseClass, props.modifier));
+  const emit = defineEmits(['tab-change', 'tab-arrow-up'])
 
-    const tabs = inject('tabs');
+  const setActive = (state) => {
+    // TODO: provide/inject current active tab index or something?
+    if (state) hidden.value = false;
+    active.value = state;
+    emit('tab-change', state, props.id);
+  };
+  const setAnimationDirection = (direction) => {
+    // TODO Use provide/inject here?
+    // console.log(direction, 'YOOOOOO')
+    animationDirection.value = direction;
+  };
+  const handleUpArrowNav = () => {
+    // YOU WAHT NOW?!?!?!
+    // TODO: emit event for tabPanel to deal with????
+    emit('tab-arrow-up')
+    // $parent.setFocusToActiveTabHeader();
+  };
+  const animationEnd = (event) => {
+    if (event.animationName.split('-')[0] === 'exit') {
+      hidden.value = true;
+      animationDirection.value = null;
+    }
+  };
 
-    onBeforeMount(() => {
-      tabs.value.push({
-        name: props.name,
-        id: props.id,
-        disabled: props.disabled,
-        ariaLabelledby: props.ariaLabelledby,
-        setActive,
-        setAnimationDirection,
-      })
-    })
+  const tabs = inject('tabs');
 
-    return {
-      style: useCssModule(),
-      modifierClass,
-      animationDirection,
-      baseClass,
-      mapClasses,
-      animationEnd,
-      active,
-      hidden,
-      handleUpArrowNav,
+  onBeforeMount(() => {
+    tabs.value.push({
+      name: props.name,
+      id: props.id,
+      disabled: props.disabled,
+      ariaLabelledby: props.ariaLabelledby,
       setActive,
       setAnimationDirection,
-    };
-  },
-});
-
+    })
+  })
 </script>
 
 <style lang="scss" module src="./styles/CdrTabPanel.module.scss">
