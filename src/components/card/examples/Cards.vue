@@ -19,7 +19,7 @@ export default {
     complexCard,
   },
   computed: {
-    availablePalettes() {
+    availablePalettes() { //iterate over some fake palettes
         return ['default', 'dark'] 
     },
     cardClass() {
@@ -27,5 +27,6 @@ export default {
     }
   }
 };
+
 </script>
 

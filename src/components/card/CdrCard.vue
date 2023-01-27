@@ -42,7 +42,7 @@ export default defineComponent({
   emits: ['cdr-card-clicked'], // add the 'cdr-card-clicked' event to the 'emits' option
   setup(props) {
     const baseClass = ref(props.cdrCardIsLinked ? 'cdr-card' : 'cdr-card--static');
-    const paletteClass = computed(() => {
+    const paletteClass = computed(() => { // adding a palette class
       if (props.palette === 'default') {
         return '';
       }
