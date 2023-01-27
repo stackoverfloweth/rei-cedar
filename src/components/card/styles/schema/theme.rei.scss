@@ -1,0 +1,27 @@
+$theme-map--REI: (
+  'color': (
+    'background-color-default': $cdr-color-background-primary,
+    'cdr-card-text-color-default': $cdr-color-text-primary,
+    'cdr-card-text-color-link-hover': $cdr-color-text-link-hover,
+  ),
+  'prominence': (
+    'cdr-card-prominence-raised': $cdr-prominence-raised,
+    'cdr-card-prominence-floating': $cdr-prominence-floating,
+  ),
+  'radius': (
+  'cdr-card-border-radius-default': $cdr-radius-softer,
+  'cdr-card-border-radius-soft': $cdr-radius-soft,
+  ),
+  'shape': (
+    'cdr-card-transform-default': translateY(-$cdr-space-eighth-x),
+  ),
+  'spacing': (
+    'cdr-card-space-eighth-x': $cdr-space-eighth-x,
+    'cdr-card-space-half-x': $cdr-space-half-x,
+  ),
+  'value': (
+    'cdr-card-relative': 'relative',
+    'cdr-card-width-100': '100%',
+    'cdr-card-cursor-pointer': 'pointer',
+  ),
+);

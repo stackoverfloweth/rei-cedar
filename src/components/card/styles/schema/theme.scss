@@ -1,0 +1,124 @@
+/**
+
+    @file card-schema.scss
+
+    This file contains a map of card schemas that can be used to style cards. It also includes two functions and two mixins to make it easy to use these schemas.
+
+    The $card-schema map contains two keys, default and dark. Each key maps to an object that contains several sub-objects: color, prominence, radius, motion, and value. Each of these sub-objects contain several key-value pairs that correspond to different CSS properties that can be used to style a card.
+
+    The available-palettes() function returns a list of all the available palettes in the $card-schema map.
+
+    The card-schema-get($map-name, $value-name, $palette-name: 'default') function can be used to retrieve a specific value from the $card-schema map. The $map-name argument should be one of the sub-objects in the $card-schema map (e.g. color, prominence, etc.). The $value-name argument should be the name of the key whose value you want to retrieve (e.g. cdr-card-background-color-default, cdr-card-prominence-raised, etc.). The $palette-name argument is optional and defaults to default.
+
+    The cdr-card-shape($palette: 'default') mixin can be used to apply the border-radius, box-shadow, and overflow properties from the radius and prominence sub-objects of the specified palette.
+
+    The cdr-card-color($palette: 'default') mixin can be used to apply the text and background color properties from the color sub-object of the specified palette.
+*/
+
+$card-schema: (
+  'default': ( 
+    'color': (
+      'cdr-card-background-color-default': $cdr-color-background-primary,
+      'cdr-card-text-color-default': $cdr-color-text-primary,
+      'cdr-card-text-color-link-hover': $cdr-color-text-link-hover,
+      // other color variables
+    ),
+    'prominence': (
+      'cdr-card-prominence-raised': $cdr-prominence-raised,
+      'cdr-card-prominence-floating': $cdr-prominence-floating,
+      // other prominence variables
+    ),
+    'radius': (
+      'cdr-card-border-radius-default': $cdr-radius-softer,
+      'cdr-card-border-radius-soft': $cdr-radius-soft,
+      // other radius variables
+    ),
+    'motion': (
+      'cdr-card-transform-default': translateY(-$cdr-space-eighth-x),
+      'cdr-card-transition-duration': '$cdr-duration-2-x'
+      // other shape variables
+    ),
+    'value': (
+      'cdr-value-card-position': 'relative',
+      'cdr-value-card-cursor': 'pointer',
+      'cdr-container-constraint': 'hidden',
+      'cdr-value-card-width-100': '100%',
+    ),
+  ),
+  'dark': ( 
+    'color': (
+      'cdr-card-background-color-default': $cdr-color-background-tooltip-default,
+      'cdr-card-text-color-default': $cdr-color-text-tooltip-default,
+      'cdr-card-text-color-link-hover': $cdr-color-text-tab-hover,
+      // other color variables
+    ),
+    'prominence': (
+      'cdr-card-prominence-raised': $cdr-prominence-raised,
+      'cdr-card-prominence-floating': $cdr-prominence-floating,
+      // other prominence variables
+    ),
+    'radius': (
+      'cdr-card-border-radius-default': $cdr-radius-softer,
+      'cdr-card-border-radius-soft': $cdr-radius-soft,
+      // other radius variables
+    ),
+    'motion': (
+      'cdr-card-transform-default': translateY(-$cdr-space-eighth-x),
+      'cdr-card-transition-duration': '$cdr-duration-2-x'
+      // other shape variables
+    ),
+    'value': (
+      'cdr-value-card-position': 'relative',
+      'cdr-value-card-cursor': 'pointer',
+      'cdr-container-constraint': 'hidden',
+      'cdr-value-card-width-100': '100%',
+    ),
+  ),
+);
+
+// function to return all available palettes
+@function available-palettes() {
+  @return map-keys($card-schema);
+}
+
+// function to retrieve value from card schema map
+@function card-schema-get($map-name, $value-name, $palette-name: 'default') {
+  @return map-get(map-get(map-get($card-schema, $palette-name), $map-name), $value-name);
+}
+
+@mixin cdr-card-shape($palette: 'default') {
+  border-radius: card-schema-get('radius', 'cdr-card-border-radius-default', $palette);
+  box-shadow: card-schema-get('prominence', 'cdr-card-prominence-raised', $palette);
+  overflow: card-schema-get('value', 'cdr-container-constraint', $palette);
+  width: card-schema-get('value', 'cdr-card-width-100', $palette);
+
+
+  &:active, &:hover {
+    box-shadow: card-schema-get('prominence', 'cdr-card-prominence-floating', $palette);
+    transform: card-schema-get('motion', 'cdr-card-transform-default', $palette);
+    transition: card-schema-get('motion', 'cdr-card-transition-duration', $palette);
+  }
+}
+
+@mixin cdr-card-color($palette: 'default') {
+  $text-color-default: card-schema-get('color', 'cdr-card-text-color-default', $palette);
+  $background-color-default: card-schema-get('color', 'cdr-card-background-color-default', $palette);
+  $text-color-link-hover: card-schema-get('color', 'cdr-card-text-color-link-hover', $palette);
+
+  color: $text-color-default;
+  background-color: $background-color-default;
+
+  &:active, &:hover {
+    color: $text-color-link-hover;
+  }
+}
+
+
+@mixin cdr-card-behavior($palette: 'default') {
+  cursor: card-schema-get('value', 'cdr-card-cursor', $palette);
+  position: card-schema-get('value', 'cdr-card-position', $palette);
+}
+
+.card{
+  display: block;
+}
