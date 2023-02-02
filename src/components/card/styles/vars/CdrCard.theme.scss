@@ -1,0 +1,138 @@
+/**
+
+    @file card-styles.scss
+
+    This file contains a map of card styles that can be used to style cards. It also includes two functions and two mixins to make it easy to use these schemas.
+    
+    The $card-styles map contains two keys, default and dark. Each key maps to an object that contains several sub-objects: color, prominence, radius, motion, and value. Each of these sub-objects contain several key-value pairs that correspond to different CSS properties that can be used to style a card.
+
+    The available-palettes() function returns a list of all the available palettes in the $card-styles map.
+
+    The card-styles-get($map-name, $value-name, $palette-name: 'default') function can be used to retrieve a specific value from the $card-styles map. The $map-name argument should be one of the sub-objects in the $card-styles map (e.g. color, prominence, etc.). The $value-name argument should be the name of the key whose value you want to retrieve (e.g. cdr-card-background-color-default, card-prominence-raised, etc.). The $palette-name argument is optional and defaults to default.
+
+    NOTES and Thoughts 
+    * Pulling the following style map in via the token resource would allow this mixins file to build for themes without needind to introduce additial files into Cedar directly.
+    * the orginization by foundation is interesting tho I dont know its the most efficiant translation for css
+    as you can see below there are many items listed in "value" that I would like to understand better
+    One thought is that we could orginize by color shape and behavior as the mixins do -- any thoughts? 
+
+    */
+
+$card-styles: (
+  'default': ( 
+    'color': (
+      'card-background': $cdr-color-background-primary,
+      'card-text': $cdr-color-text-primary, // not sure we should define a text or link color in this component
+      'card-text-active': $cdr-color-text-link-hover, // this feels half baked and only effects styles that are not defined from components that my be droped in
+      // other color variables
+    ),
+    'prominence': (
+      'card-prominence': $cdr-prominence-raised,
+      'card-prominence-active': $cdr-prominence-floating,
+      // other prominence variables
+    ),
+    'radius': (
+      'card-border-radius': $cdr-radius-softer,
+      // other radius variables
+    ),
+    'motion': (
+      'card-transition-start': 'box-shadow' $cdr-duration-2-x $cdr-timing-function-ease,
+      'card-transform-active': translateY(-$cdr-space-eighth-x),
+      'card-transition-duration': $cdr-duration-2-x,
+      // other motion variables
+    ),
+    'value': (
+      'card-position': 'relative',
+      'card-title-position': 'static',
+      'card-cursor': 'pointer',
+      'card-container-constraint': 'hidden',
+      'card-width': '100%',
+    ),
+    '__linked': (
+      'card__link-title-decoration:  none !important;'
+      'card__link-title-decoration-active': 'underline !important',
+    ),
+  ),
+  'dark': ( 
+    'color': (
+      'card-background': $cdr-color-background-secondary,
+      'card-text': $cdr-color-text-secondary,
+      'card-text-active': $cdr-color-text-tab-hover,
+      // other color variables
+    ),
+    'prominence': (
+      &:extend(default),
+      // other prominence variables
+    ),
+    'radius': (
+      &:extend(default),
+      // other radius variables
+    ),
+    'motion': (
+      &:extend(default),
+      // other motion variables
+    ),
+    'value': (
+      &:extend(default),
+    ),
+    '__linked': (
+      &:extend(default),
+    ),
+  ),
+);
+
+
+/**
+    Theme functions to itterate over available data:
+    these should be able to be centralized and used in all our components rather than being duplicated in each 
+*/
+// function to return all available palettes
+@function available-palettes() {
+  @return map-keys($card-styles);
+}
+
+// function to retrieve value from card styles map
+@function card-styles-get($map-name, $value-name, $palette-name: 'default') {
+  @return map-get(map-get(map-get($card-styles, $palette-name), $map-name), $value-name);
+}
+
+/**
+    CARD MIXINS: 
+    The following should be stored in tokens file with the style map for the theme:
+    * The cdr-card-behavior mixin should be used to apply potential behaviors to the cdr-card component UI
+    * The cdr-card-color mixin should be used to apply the text and background color properties from the color sub-object of the specified palette.
+    * The cdr-card-scaffold mixin should be used to apply the border-radius, box-shadow, and overflow properties from the radius and prominence sub-objects of the specified palette.
+    
+    the theme mixins can then be imported to the component mixin 0 in this example 'the mixins are in the var folder card-base-mixin'
+    doing this will allow themes flexability not only of values but also of selector value pairs
+    as long as the markup structure will support it.
+
+*/
+
+// Mixin to apply card behaviors (for many components this may be the only mixin that would have new values defined)
+@mixin cdr-card-behavior($palette: 'default') {
+  cursor: card-styles-get('value', 'card-cursor', $palette);
+  position: card-styles-get('value', 'card-position', $palette);
+  transition: card-styles-get('motion', 'card-transition-start', $palette);
+
+  &:active, &:hover {
+    box-shadow: card-styles-get('prominence', 'card-prominence-active', $palette);
+    transform: card-styles-get('motion', 'card-transform', $palette);
+    transition: card-styles-get('motion', 'card-transition-duration', $palette);
+  }
+}
+
+// Mixin to apply card color styles (for many components this may be the only mixin that would have new values defined)
+@mixin cdr-card-color($palette: 'default') {
+  background-color: card-styles-get('color', 'card-background', $palette);
+  color: card-styles-get('color', 'card-text', $palette);
+
+}
+
+// Mixin to apply card scaffold styles (shape and motion vs color)
+@mixin cdr-card-scaffold($palette: 'default') {
+  border-radius: card-styles-get('radius', 'card-border-radius', $palette);
+  box-shadow: card-styles-get('prominence', 'card-prominence', $palette);
+  overflow: card-styles-get('value', 'card-container-constraint', $palette);
+  width: card-styles-get('value', 'card-width', $palette);
+}

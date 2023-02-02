@@ -11,12 +11,7 @@
  * @slot - Slot for custom content
  */
 
-import {
-  ref,
-  defineComponent,
-  useCssModule,
-  computed,
-} from 'vue';
+import { ref, defineComponent, useCssModule } from 'vue';
 import CdrRenderlessCard from './CdrRenderlessCard.vue';
 
 export default defineComponent({
@@ -33,26 +28,14 @@ export default defineComponent({
       required: false,
       default: true,
     },
-    palette: {
-      type: String,
-      required: false,
-      default: 'default',
-    },
   },
   emits: ['cdr-card-clicked'], // add the 'cdr-card-clicked' event to the 'emits' option
   setup(props) {
-    const baseClass = ref(props.cdrCardIsLinked ? 'cdr-card' : 'cdr-card--static');
-    const paletteClass = computed(() => { // adding a palette class
-      if (props.palette === 'default') {
-        return '';
-      }
-      return `${baseClass.value}--${props.palette}`;
-    });
+    const isLinked = ref(props.cdrCardIsLinked);
 
     return {
       style: useCssModule(),
-      baseClass,
-      paletteClass,
+      baseClass: isLinked.value ? 'cdr-card' : 'cdr-card--static',
       // add event listener for 'cdr-card-clicked'
       handleCardClick() {
         if (isLinked.value) {
@@ -68,7 +51,7 @@ export default defineComponent({
 <template>
   <component
     :is="tag"
-    :class="[style[baseClass], style[paletteClass]]"
+    :class="style[baseClass]"
   >
     <slot />
   </component>

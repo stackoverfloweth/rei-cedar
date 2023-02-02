@@ -3,7 +3,9 @@
     <simple-card />
     <hr>
     <div v-for="palette in availablePalettes">
-      <complex-card :palette="palette" @cdr-card-clicked="handleCardClick"/>
+      <div :class="palette">
+        <complex-card :palette="palette" @cdr-card-clicked="handleCardClick"/>
+      </div>
     </div>
   </div>
 </template>
@@ -22,11 +24,7 @@ export default {
     availablePalettes() { //iterate over some fake palettes
         return ['default', 'dark'] 
     },
-    cardClass() {
-        return `cdr-card cdr-card--${this.palette}`;
-    }
   }
 };
 
 </script>
-
