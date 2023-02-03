@@ -7,7 +7,7 @@
   }
   
   @mixin cdr-card-link-mixin($palette: 'default') {
-    text-decoration: card-styles-get('__linked', 'card__link-title-decoration', $palette);
+    text-decoration: none !important;
   
     &:hover {
       text-decoration: underline !important;
